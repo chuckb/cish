@@ -12,7 +12,7 @@
 
 <print_statement> ::= "print" "(" <expression> ")" ";"
 
-<condition> ::= <expression> <relop> <expression>
+<condition> ::= <expression> | <expression> <relop> <expression>
 
 <relop> ::= "==" | "<" | ">"
 
@@ -40,4 +40,4 @@
 
 <symbol> ::= "!" | "@" | "#" | "$" | "%" | "^" | "&" | "*" | "(" | ")" | "-" | "_" | "=" | "+" | "{" | "}" | "[" | "]" | "|" | "\\" | ":" | ";" | "'" | "<" | ">" | "," | "." | "?" | "/"
 
-<whitespace> ::= " " | "\t"
+<whitespace> ::= " " | "\t" | "\n"
