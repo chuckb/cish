@@ -26,7 +26,11 @@
 
 <string_content> ::= <letter> | <digit> | <symbol> | <whitespace> | <string_content> <letter> | <string_content> <digit> | <string_content> <symbol> | <string_content> <whitespace>
 
-<identifier> ::= <letter> <identifier_tail>*
+<int_identifier> ::= <letter> <identifier_tail>*
+
+<identifier> ::= <int_identifier> | <string_identifier>
+
+<string_identifier> ::= <letter> <identifier_tail>* "$"
 
 <identifier_tail> ::= <letter> | <digit>
 
