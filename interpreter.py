@@ -1,18 +1,21 @@
-from typing import Union
 from parser_ import *
 
 class Interpreter(ASTVisitor):
-  def __init__(self, context = {}):
+  def __init__(self, context = {"strings":{}, "ints":{}}):
     self.variables = context
 
   def error(self):
+    #TODO: Add location information
     raise Exception('Invalid syntax')
 
   def visit_number(self, number:NumberNode) -> int:
     return number.value
 
-  def visit_identifier(self, identifier:IdentifierNode) -> Union[str, int]:
-    return self.variables[identifier.name]
+  def visit_string_identifier(self, identifier:StringIdentifierNode) -> str:
+    return self.variables["strings"][identifier.name]
+
+  def visit_int_identifier(self, identifier:IntIdentifierNode) -> int:
+    return self.variables["ints"][identifier.name]
 
   def visit_unary_condition(self, unary_condition:UnaryConditionNode) -> bool:
     return unary_condition.expression.accept(self)
@@ -57,7 +60,20 @@ class Interpreter(ASTVisitor):
   def visit_assignment(self, assignment:AssignmentNode):
     identifier = assignment.identifier.name
     value = assignment.value.accept(self)
-    self.variables[identifier] = value
+    if type(assignment.identifier) is StringIdentifierNode:
+      if type(value) is str:
+        self.variables["strings"][identifier] = value
+      else:
+         #TODO: Add location to message
+         raise Exception("Type exception")
+    elif type(assignment.identifier) is IntIdentifierNode:
+      if type(value) is int:
+        self.variables["ints"][identifier] = value
+      else:
+        #TODO: Add location to message
+        raise Exception("Type exception")
+    else:
+      assert False, "Non-exhaustive type handling in visit_assignment"
 
   def visit_if_statement(self, if_statement:IfStatementNode):
     if if_statement.condition.accept(self):

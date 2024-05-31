@@ -9,7 +9,11 @@ class ASTVisitor(ABC):
     pass
 
   @abstractmethod
-  def visit_identifier(self, identifier):
+  def visit_int_identifier(self, int_identifier):
+    pass
+
+  @abstractmethod
+  def visit_string_identifier(self, string_identifier):
     pass
 
   @abstractmethod
@@ -81,11 +85,21 @@ class NumberNode(ASTNode):
     return visitor.visit_number(self)
 
 class IdentifierNode(ASTNode):
+  pass
+
+class StringIdentifierNode(IdentifierNode):
   def __init__(self, name:str):
     self.name = name  # Variable name
 
   def accept(self, visitor):
-    return visitor.visit_identifier(self)
+    return visitor.visit_string_identifier(self)
+
+class IntIdentifierNode(IdentifierNode):
+  def __init__(self, name:str):
+    self.name = name  # Variable name
+
+  def accept(self, visitor):
+    return visitor.visit_int_identifier(self)
 
 class StatementNode(ASTNode):
   pass
@@ -254,8 +268,7 @@ class Parser:
       self.eat(TokenType.STRING)
       node = StringNode(token.value)
     elif token.type == TokenType.IDENTIFIER:
-      self.eat(TokenType.IDENTIFIER)
-      node = IdentifierNode(token.value)
+      node = self.identifier()
     elif token.type == TokenType.LPAREN:
       self.eat(TokenType.LPAREN)
       node = self.expression()
@@ -288,10 +301,17 @@ class Parser:
         return BinaryExpressionNode(term, ExpOpType.PLUS if token.type == TokenType.PLUS else ExpOpType.MINUS, self.expression())
       else:
         return TermExpressionNode(term)
-      
-  def assignment(self) -> AssignmentNode:
-    identifier = IdentifierNode(self.current_token.value)
+
+  def identifier(self) -> IdentifierNode:
+    value = self.current_token.value
     self.eat(TokenType.IDENTIFIER)
+    if value[-1] == "$":
+      return StringIdentifierNode(value)
+    else:
+      return IntIdentifierNode(value)
+    
+  def assignment(self) -> AssignmentNode:
+    identifier = self.identifier()
     self.eat(TokenType.ASSIGN)
     expression = self.expression()
     self.eat(TokenType.SEMI)

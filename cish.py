@@ -5,8 +5,8 @@ from interpreter import Interpreter
 # Example usage:
 if __name__ == '__main__':
   text = '''
-  s = "Hello World!";
-  print(s);
+  s$ = "Hello World!";
+  print(s$);
   x = 10;
   y = 20;
   print(x + y);

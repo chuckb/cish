@@ -70,7 +70,7 @@ class Lexer:
 
   def identifier(self) -> Token:
     result = ''
-    while self.current_char is not None and (self.current_char.isalnum() or self.current_char == '_'):
+    while self.current_char is not None and (self.current_char.isalnum() or self.current_char == '_' or self.current_char == '$'):
       result += self.current_char
       self.advance()
     return Token(TokenType.IDENTIFIER, result, Location("", self.line, self.col))
